@@ -20,13 +20,26 @@ It's based on the official tutorial available here [Apigee hybrid](https://cloud
 
 ![Diagram](docs/medium_network.png)
 
-## Subnet partitions
+## Subnets
 
 | Name | VLAN ID | CIDR | Purpose |
 |------|---------|------|---------|
 | Main | 1 |`10.0.0.0/24` | Workstation, pfSense, ESXi, vCenter |
 | Admin subnet | 25 |  `10.25.0.0/24` | Anthos admin workstation + admin cluster |
 | User subnet | 26 | `10.26.0.0/24` | Anthos user cluster (apigee hybrid runtime) |
+
+## Static IPs and VIPs
+
+| Name | Segment | Value |
+|------|---------|-------|
+| ESXi | Main | `10.0.0.10` |
+| vCenter | Main | `10.0.0.11` |
+| Google DNS | Main | `10.0.0.20` |
+| NTP (pfSense) | Main | `10.0.0.1` |
+| Admin control plane VIP | Admin subnet | `10.25.0.50` |
+| User control plane VIP | Admin subnet | `10.25.0.51` |
+| User anthos ingress VIP | User subnet | `10.26.0.50` |
+| User apigee ingress VIP | User subnet | `10.26.0.51` |
 
 ## Steps
 
