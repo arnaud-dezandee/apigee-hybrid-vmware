@@ -1,0 +1,33 @@
+# VMware Apigee hybrid
+
+This repository contains code to setup Apigee hybrid on VMware without internet access for cluster VMs.
+
+It's based on the official tutorial available here [Apigee hybrid](https://cloud.google.com/apigee/docs/hybrid/v1.7/big-picture).
+
+## Deployment Details
+
+* [VMware ESXi](https://www.vmware.com/products/esxi-and-esx.html) 7.0 U1+
+* [VMware vCenter Server](https://www.vmware.com/products/vcenter-server.html) 7.0 U1+
+* [Anthos clusters on VMware](https://cloud.google.com/anthos/clusters/docs/on-prem/1.10/overview) 1.10
+  * [gkeadm](https://cloud.google.com/anthos/clusters/docs/on-prem/1.10/downloads) 1.10.3-gke.49
+  * gkectl 1.10.3-gke.49 (git-b074b66a3)
+* [Anthos Service Mesh](https://cloud.google.com/apigee/docs/hybrid/v1.7/install-asm) 1.13.x
+  * [asmcli](https://cloud.google.com/service-mesh/v1.13/docs/unified-install/install-dependent-tools#download_asmcli) 1.13.4-asm.4+config2
+* [Apigee Hybrid](https://cloud.google.com/apigee/docs/hybrid/v1.7/big-picture) 1.7.2
+
+
+## Network diagram
+
+![Diagram](docs/medium_network.png)
+
+## Subnet partitions
+
+| Name | VLAN ID | CIDR | Purpose |
+|------|---------|------|---------|
+| Main | 1 |`10.0.0.0/24` | Workstation, pfSense, ESXi, vCenter |
+| Admin subnet | 25 |  `10.25.0.0/24` | Anthos admin workstation + admin cluster |
+| User subnet | 26 | `10.26.0.0/24` | Anthos user cluster (apigee hybrid runtime) |
+
+## Steps
+
+* [GCP Tunnel](01-gcp-tunnel/README.md)
