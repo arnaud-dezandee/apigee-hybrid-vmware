@@ -41,6 +41,18 @@ It's based on the official tutorial available here [Apigee hybrid](https://cloud
 | User anthos ingress VIP | User subnet | `10.26.0.50` |
 | User apigee ingress VIP | User subnet | `10.26.0.51` |
 
+## Load Balancing
+
+Configure load balancing on with HAProxy on pfSense & VIPs:
+
+| Name                           | VIP          | Frontend Port | Server Pool           | Server Port |
+|--------------------------------|--------------|---------------|-----------------------|-------------|
+| gke-admin-cluster-cp           | `10.25.0.50` | 443           | gke-apigee-admin{1-3} | 30968       |
+| gke-user-cluster-cp            | `10.25.0.51` | 443           | gke-apigee-admin{4}   | 30562       |
+| gke-user-cluster-konnectivity  | `10.25.0.51` | 8132          | gke-apigee-admin{4}   | 30563       |
+| gke-user-cluster-anthos-ingress | `10.26.0.50` | 80, 443      | gke-apigee-user{1-6}  | 30243, 30879 |
+| gke-user-cluster-apigee-ingress | `10.26.0.51` | 443          | gke-apigee-user{1-6}  | 30397        |
+
 ## Steps
 
 * [GCP Tunnel](01-gcp-tunnel/README.md)
