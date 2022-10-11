@@ -4,6 +4,7 @@
 02-anthos-admin-ws/gke-admin-workstation
 02-anthos-admin-ws/gkeadm
 02-anthos-admin-ws/vcenter.crt
+05-apigee-hybrid/apigeectl
 
 # Local .terraform directories
 **/.terraform/*

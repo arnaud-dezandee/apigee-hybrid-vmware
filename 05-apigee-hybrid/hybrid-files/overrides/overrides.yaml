@@ -1,0 +1,52 @@
+gcp:
+  region: _YOUR_GCP_PROJECT_REGION_
+  projectID: _YOUR_GCP_PROJECT_ID_
+
+k8sCluster:
+  name: gke-apigee-user-cluster1
+  region: external
+
+org: _YOUR_APIGEE_ORG_
+
+instanceID: "apigee_hybrid_vmware"
+
+cassandra:
+  hostNetwork: false
+  replicaCount: 3
+  storage:
+    capacity: 100Gi
+  resources:
+    requests:
+      cpu: 2
+      memory: 4Gi
+
+virtualhosts:
+  - name: my-env-group
+    sslCertPath: ./certs/_YOUR_SSL_CERT_.crt
+    sslKeyPath: ./certs/_YOUR_SSL_KEY_.key
+
+envs:
+  - name: my-env
+    serviceAccountPaths:
+      synchronizer: ./service-accounts/_YOUR_GCP_PROJECT_ID_-apigee-synchronizer.json
+      udca: ./service-accounts/_YOUR_GCP_PROJECT_ID_-apigee-udca.json
+      runtime: ./service-accounts/_YOUR_GCP_PROJECT_ID_-apigee-runtime.json
+
+mart:
+  serviceAccountPath: ./service-accounts/_YOUR_GCP_PROJECT_ID_-apigee-mart.json
+
+connectAgent:
+  serviceAccountPath: ./service-accounts/_YOUR_GCP_PROJECT_ID_-apigee-mart.json
+
+metrics:
+  serviceAccountPath: ./service-accounts/_YOUR_GCP_PROJECT_ID_-apigee-metrics.json
+
+udca:
+  serviceAccountPath: ./service-accounts/_YOUR_GCP_PROJECT_ID_-apigee-udca.json
+
+watcher:
+  serviceAccountPath: ./service-accounts/_YOUR_GCP_PROJECT_ID_-apigee-watcher.json
+
+logger:
+  enabled: true # Set to "false" for GKE. Set to "true" for all other kubernetes platforms.
+  serviceAccountPath: ./service-accounts/_YOUR_GCP_PROJECT_ID_-apigee-logger.json
