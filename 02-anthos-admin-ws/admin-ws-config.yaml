@@ -1,0 +1,44 @@
+gcp:
+  componentAccessServiceAccountKeyPath: "component-access-key.json"
+vCenter:
+  credentials:
+    address: vCenter.local
+    fileRef:
+      path: credential.yaml
+      entry: vCenter
+  datacenter: Datacenter
+  datastore: datastore1
+  cluster: Cluster
+  network: VM Net 25
+  # vSphere vm folder to deploy vms into. defaults to datacenter top level folder
+  folder: ""
+  resourcePool: Pool
+  # Provide the path to vCenter CA certificate pub key for SSL verification
+  caCertPath: vcenter.crt
+# The URL of the proxy for the jump host
+proxyUrl: ""
+adminWorkstation:
+  name: gke-admin-workstation
+  cpus: 2
+  memoryMB: 2048
+  # The boot disk size of the admin workstation in GB. It is recommended to use a
+  # disk with at least 50 GB to host images decompressed from the bundle.
+  diskGB: 50
+  # Name for the persistent disk to be mounted to the home directory (ending in .vmdk).
+  # Any directory in the supplied path must be created before deployment.
+  dataDiskName: gke-admin-workstation/gke-admin-workstation-data-disk.vmdk
+  # The size of the data disk in MB.
+  dataDiskMB: 512
+  network:
+    # The IP allocation mode: 'dhcp' or 'static'
+    ipAllocationMode: static
+    hostConfig:
+      # The IPv4 static IP address for the admin workstation
+      ip: "10.25.0.2"
+      gateway: "10.25.0.1"
+      netmask: "255.255.255.0"
+      dns:
+        - "10.0.0.20"
+  # The URL of the proxy for the admin workstation
+  proxyUrl: ""
+  ntpServer: "10.25.0.1"

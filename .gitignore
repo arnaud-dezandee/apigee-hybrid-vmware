@@ -1,3 +1,9 @@
+# Tools
+02-anthos-admin-ws/logs/
+02-anthos-admin-ws/*.json
+02-anthos-admin-ws/gke-admin-workstation
+02-anthos-admin-ws/gkeadm
+
 # Local .terraform directories
 **/.terraform/*
 
