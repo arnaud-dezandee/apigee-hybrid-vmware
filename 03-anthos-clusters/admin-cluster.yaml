@@ -1,0 +1,215 @@
+apiVersion: v1
+kind: AdminCluster
+# (Optional) A unique name for this admin cluster. This will default to a random name
+# prefixed with 'gke-admin-'
+name: "gke-apigee-admin-cluster"
+# (Required) Absolute path to a GKE bundle on disk
+bundlePath: "/var/lib/gke/bundles/gke-onprem-vsphere-1.10.3-gke.49-full.tgz"
+# (Required) vCenter configuration
+vCenter:
+  address: vCenter.local
+  datacenter: Datacenter
+  cluster: Cluster
+  # Resource pool to use. Specify [VSPHERE_CLUSTER_NAME]/Resources to use the default
+  # resource pool
+  resourcePool: Pool
+  datastore: datastore1
+  # Provide the path to vCenter CA certificate pub key for SSL verification
+  caCertPath: vcenter.crt
+  # The credentials to connect to vCenter
+  credentials:
+    # reference to external credentials file
+    fileRef:
+      # read credentials from this file
+      path: credential.yaml
+      # entry in the credential file
+      entry: vCenter
+  # (Optional) vSphere folder where cluster VMs will be located. Defaults to the the
+  # datacenter wide folder if unspecified.
+  folder: ""
+  # Provide the name for the persistent disk to be used by the deployment (ending
+  # in .vmdk). Any directory in the supplied path must be created before deployment
+  dataDisk: "gke-apigee-admin-cluster/gke-apigee-admin-cluster-disk1.vmdk"
+# (Required) Network configuration
+network:
+  # # (Optional) This section overrides ipBlockFile values. Use with ipType "static" mode.
+  # # Used for seesaw nodes as well
+  hostConfig:
+  #   # List of DNS servers
+    dnsServers:
+    - "10.0.0.20"
+  #   # List of NTP servers
+    ntpServers:
+    - "10.25.0.1"
+  #   # # List of DNS search domains
+  #   # searchDomainsForDNS:
+  #   # - ""
+  ipMode:
+    # (Required) Define what IP mode to use ("dhcp" "static" or "none"(multinic only))
+    type: static
+    ipBlockFilePath: "admin-cluster-ipblock.yaml"
+  # (Required) The Kubernetes service CIDR range for the cluster. Must not overlap
+  # with the pod CIDR range
+  serviceCIDR: 10.43.0.0/16
+  # (Required) The Kubernetes pod CIDR range for the cluster. Must not overlap with
+  # the service CIDR range
+  podCIDR: 10.42.0.0/16
+  vCenter:
+    # vSphere network name
+    networkName: VM Net 25
+# (Required) Load balancer configuration
+loadBalancer:
+  # (Required) The VIPs to use for load balancing
+  vips:
+    # Used to connect to the Kubernetes API
+    controlPlaneVIP: "10.25.0.50"
+    # # (Optional) Used for admin cluster addons (needed for multi cluster features). Must
+    # # be the same across clusters
+    # addonsVIP: ""
+  # (Required) Which load balancer to use "F5BigIP" "Seesaw" "ManualLB" or "MetalLB"(Preview).
+  # Uncomment the corresponding field below to provide the detailed spec
+  kind: ManualLB
+  # # (Required when using "ManualLB" kind) Specify pre-defined nodeports
+  manualLB:
+  #   # NodePort for ingress service's http (only needed for user cluster)
+  #   ingressHTTPNodePort: 0
+  #   # NodePort for ingress service's https (only needed for user cluster)
+  #   ingressHTTPSNodePort: 0
+  #   # NodePort for konnectivity server service (only needed for user cluster)
+  #   konnectivityServerNodePort: 0
+  #   # NodePort for control plane service
+    controlPlaneNodePort: 30968
+  #   # NodePort for addon service (only needed for admin cluster)
+  #   addonsNodePort: 31405
+  # # (Required when using "F5BigIP" kind) Specify the already-existing partition and
+  # # credentials
+  # f5BigIP:
+  #   address: ""
+  #   credentials:
+  #     # reference to external credentials file
+  #     fileRef:
+  #       # read credentials from this file
+  #       path: credential.yaml
+  #       # entry in the credential file
+  #       entry: f5BigIP
+  #   partition: ""
+  #   # # (Optional) Specify a pool name if using SNAT
+  #   # snatPoolName: ""
+  # (Required when using "Seesaw" kind) Specify the Seesaw configs
+  # seesaw:
+  #   # (Required) The absolute or relative path to the yaml file to use for IP allocation
+  #   # for LB VMs. Must contain one or two IPs. Hostconfig part will be overwritten
+  #   # by network.hostconfig if specified.
+  #   ipBlockFilePath: ""
+  #   # (Required) The Virtual Router IDentifier of VRRP for the Seesaw group. Must
+  #   # be between 1-255 and unique in a VLAN.
+  #   vrid: 0
+  #   # (Required) The IP announced by the master of Seesaw group
+  #   masterIP: ""
+  #   # (Required) The number CPUs per machine
+  #   cpus: 2
+  #   # (Required) Memory size in MB per machine
+  #   memoryMB: 3072
+  #   # (Optional) Network that the LB interface of Seesaw runs in (default: cluster
+  #   # network)
+  #   vCenter:
+  #     # vSphere network name
+  #     networkName: seg-sap-wsi-apigee01
+  #   # (Optional) Run two LB VMs to achieve high availability (default: false)
+  #   enableHA: false
+  #   # (Optional) Avoid using VRRP MAC and rely on gratuitous ARP to do failover. In
+  #   # this mode MAC learning is not needed but the gateway must refresh arp table
+  #   # based on gratuitous ARP. It's recommended to turn this on to avoid MAC learning
+  #   # configuration. In vsphere 7+ it must be true to enable HA. It is supported in
+  #   # GKE on-prem version 1.7+. (default: false)
+  #   disableVRRPMAC: true
+# Spread admin addon nodes and user masters across different physical hosts (requires
+# at least three hosts)
+antiAffinityGroups:
+  # Set to false to disable DRS rule creation
+  enabled: true
+# # (Optional/Preview) Specify the admin master node configuration which can be added
+# # or edited only during cluster creation
+# adminMaster:
+#   # Number of cpus
+#   cpus: 4
+#   # Memory size in MB
+#   memoryMB: 16384
+# # (Optional/Preview) Specify the addon node configuration which can be added or edited
+# # only during cluster creation
+# addonNode:
+#   # Enable auto resize for addon node
+#   autoResize:
+#     # Whether to enable auto resize for master. Defaults to false.
+#     enabled: false
+connectivity: connected
+# (Optional) Specify the proxy configuration
+proxy:
+  # The URL of the proxy
+  url: ""
+  # The domains and IP addresses excluded from proxying
+  noProxy: ""
+# # (Optional) Use a private Docker registry to host GKE images
+# privateRegistry:
+#   # Do not include the scheme with your registry address
+#   address: ""
+#   credentials:
+#     # reference to external credentials file
+#     fileRef:
+#       # read credentials from this file
+#       path: credential.yaml
+#       # entry in the credential file
+#       entry: privateRegistery
+#   # The absolute or relative path to the CA certificate for this registry
+#   caCertPath: ""
+# (Required): The absolute or relative path to the GCP service account key for pulling
+# GKE images
+componentAccessServiceAccountKeyPath: component-access-key.json
+# (Optional/Preview) Specify which GCP project to connect your GKE clusters to
+gkeConnect:
+  projectID: _YOUR_GCP_PROJECT_ID_
+  # The absolute or relative path to the key file for a GCP service account used to
+  # register the cluster
+  registerServiceAccountKeyPath: "connect-register-sa.json"
+# (Optional) Specify which GCP project to connect your logs and metrics to
+stackdriver:
+  projectID: _YOUR_GCP_PROJECT_ID_
+  # A GCP region where you would like to store logs and metrics for this cluster.
+  clusterLocation: _YOUR_GCP_PROJECT_REGION_
+  enableVPC: false
+  # The absolute or relative path to the key file for a GCP service account used to
+  # send logs and metrics from the cluster
+  serviceAccountKeyPath: log-mon-sa.json
+  # (Optional) Disable vsphere resource metrics collection from vcenter.  False by
+  # default
+  disableVsphereResourceMetrics: false
+# # (Optional) Configure kubernetes apiserver audit logging
+# cloudAuditLogging:
+#   projectID: ""
+#   # A GCP region where you would like to store audit logs for this cluster.
+#   clusterLocation: ""
+#   # The absolute or relative path to the key file for a GCP service account used to
+#   # send audit logs from the cluster
+#   serviceAccountKeyPath: ""
+# # (Optional/Preview) Configure backups for admin cluster. Backups will be stored under
+# # <datastore>/anthos-backups/
+# clusterBackup:
+#   # # datastore where admin cluster backups are desired
+#   # datastore: ""
+# Enable auto repair for the cluster
+autoRepair:
+  # Whether to enable auto repair feature. Set false to disable.
+  enabled: true
+# # Encrypt Kubernetes secrets at rest
+# secretsEncryption:
+#   # Secrets Encryption Mode. Possible values are: GeneratedKey
+#   mode: GeneratedKey
+#   # GeneratedKey Secrets Encryption config
+#   generatedKey:
+#     # # key version
+#     # keyVersion: 1
+#     # # disable secrets encryption
+#     # disabled: false
+# (Optional) Specify the type of OS image; available options can be set to "ubuntu_containerd"
+# or "cos". Default is "ubuntu_containerd".
+osImageType: ""

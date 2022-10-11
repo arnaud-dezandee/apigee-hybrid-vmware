@@ -3,6 +3,7 @@
 02-anthos-admin-ws/*.json
 02-anthos-admin-ws/gke-admin-workstation
 02-anthos-admin-ws/gkeadm
+02-anthos-admin-ws/vcenter.crt
 
 # Local .terraform directories
 **/.terraform/*

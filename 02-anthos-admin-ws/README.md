@@ -41,4 +41,4 @@ Then create the VM
 
 ## Next
 
-[Anthos: clusters](03-anthos-clusters/README.md)
+[Anthos: clusters](../03-anthos-clusters/README.md)

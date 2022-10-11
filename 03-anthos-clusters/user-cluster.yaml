@@ -1,0 +1,277 @@
+apiVersion: v1
+kind: UserCluster
+# (Required) A unique name for this cluster
+name: "gke-apigee-user-cluster1"
+# (Required) GKE on-prem version (example: 1.3.0-gke.16)
+gkeOnPremVersion: 1.10.3-gke.49
+# # (Optional) vCenter configuration (default: inherit from the admin cluster)
+# vCenter:
+#   datacenter: ""
+#   cluster: ""
+#   # Resource pool to use. Specify [VSPHERE_CLUSTER_NAME]/Resources to use the default
+#   # resource pool
+#   resourcePool: ""
+#   datastore: ""
+#   # Provide the path to vCenter CA certificate pub key for SSL verification
+#   caCertPath: ""
+#   # The credentials to connect to vCenter
+#   credentials:
+#     # reference to external credentials file
+#     fileRef:
+#       # read credentials from this file
+#       path: ""
+#       # entry in the credential file
+#       entry: ""
+#   # (Optional) vSphere folder where cluster VMs will be located. Defaults to the the
+#   # datacenter wide folder if unspecified.
+#   folder: ""
+# (Required) Network configuration; vCenter section is optional and inherits from
+# the admin cluster if not specified
+network:
+  # # (Optional) This section overrides ipBlockFile values. Use with ipType "static" mode.
+  # # Used for seesaw nodes as well
+  hostConfig:
+  #   # List of DNS servers
+    dnsServers:
+    - "10.0.0.20"
+  #   # List of NTP servers
+    ntpServers:
+    - "10.26.0.1"
+  #   # # List of DNS search domains
+  #   # searchDomainsForDNS:
+  #   # - ""
+  ipMode:
+    # (Required) Define what IP mode to use ("dhcp" "static" or "none"(multinic only))
+    type: static
+    # # (Required when using "static" mode) The absolute or relative path to the yaml file
+    # # to use for static IP allocation. Hostconfig part will be overwritten by network.hostconfig
+    # # if specified
+    ipBlockFilePath: user-cluster-ipblock.yaml
+  # (Required) The Kubernetes service CIDR range for the cluster. Must not overlap
+  # with the pod CIDR range
+  serviceCIDR: 10.45.0.0/16
+  # (Required) The Kubernetes pod CIDR range for the cluster. Must not overlap with
+  # the service CIDR range
+  podCIDR: 10.44.0.0/16
+  vCenter:
+    # vSphere network name
+    networkName: VM Net 26
+  # # (Optional) List of additional node network interfaces feature enabled by multipleNetworkInterfaces
+  # additionalNodeInterfaces:
+  # # vSphere network name
+  # - networkName: ""
+  #   # (Required) Define what IP mode to use ("dhcp" "static" or "none"(multinic only))
+  #   type: dhcp
+  #   # # (Required when using "static" mode) The absolute or relative path to the yaml file
+  #   # # to use for static IP allocation. Hostconfig part will be overwritten by network.hostconfig
+  #   # # if specified
+  #   # ipBlockFilePath: ""
+# (Required) Load balancer configuration
+loadBalancer:
+  # (Required) The VIPs to use for load balancing
+  vips:
+    # Used to connect to the Kubernetes API
+    controlPlaneVIP: "10.25.0.51"
+    # Shared by all services for ingress traffic
+    ingressVIP: "10.26.0.50"
+  # (Required) Which load balancer to use "F5BigIP" "Seesaw" "ManualLB" or "MetalLB"(Preview).
+  # Uncomment the corresponding field below to provide the detailed spec
+  kind: ManualLB
+  # # (Required when using "ManualLB" kind) Specify pre-defined nodeports
+  manualLB:
+    # NodePort for ingress service's http (only needed for user cluster)
+    ingressHTTPNodePort: 30243
+    # NodePort for ingress service's https (only needed for user cluster)
+    ingressHTTPSNodePort: 30879
+    # NodePort for konnectivity server service (only needed for user cluster)
+    konnectivityServerNodePort: 30563
+    # NodePort for control plane service
+    controlPlaneNodePort: 30562
+  #   # NodePort for addon service (only needed for admin cluster)
+  #   addonsNodePort: 0
+  # # (Required when using "F5BigIP" kind) Specify the already-existing partition and
+  # # credentials
+  # f5BigIP:
+  #   address: ""
+  #   credentials:
+  #     # reference to external credentials file
+  #     fileRef:
+  #       # read credentials from this file
+  #       path: credential.yaml
+  #       # entry in the credential file
+  #       entry: f5BigIP
+  #   partition: ""
+  #   # # (Optional) Specify a pool name if using SNAT
+  #   # snatPoolName: ""
+  # (Required when using "Seesaw" kind) Specify the Seesaw configs
+  # seesaw:
+  #   # (Required) The absolute or relative path to the yaml file to use for IP allocation
+  #   # for LB VMs. Must contain one or two IPs. Hostconfig part will be overwritten
+  #   # by network.hostconfig if specified.
+  #   ipBlockFilePath: ""
+  #   # (Required) The Virtual Router IDentifier of VRRP for the Seesaw group. Must
+  #   # be between 1-255 and unique in a VLAN.
+  #   vrid: 0
+  #   # (Required) The IP announced by the master of Seesaw group
+  #   masterIP: ""
+  #   # (Required) The number CPUs per machine
+  #   cpus: 4
+  #   # (Required) Memory size in MB per machine
+  #   memoryMB: 3072
+  #   # (Optional) Network that the LB interface of Seesaw runs in (default: cluster
+  #   # network)
+  #   vCenter:
+  #     # vSphere network name
+  #     networkName: seg-sap-wsi-apigee01
+  #   # (Optional) Run two LB VMs to achieve high availability (default: false)
+  #   enableHA: false
+  #   # (Optional) Avoid using VRRP MAC and rely on gratuitous ARP to do failover. In
+  #   # this mode MAC learning is not needed but the gateway must refresh arp table
+  #   # based on gratuitous ARP. It's recommended to turn this on to avoid MAC learning
+  #   # configuration. In vsphere 7+ it must be true to enable HA. It is supported in
+  #   # GKE on-prem version 1.7+. (default: false)
+  #   disableVRRPMAC: true
+  # # (Required when using "MetalLB" kind in user clusters) Specify the MetalLB configs
+  # metalLB:
+  #   # (Required) A list of non-overlapping IP pools used by load balancer typed services.
+  #   # Must include ingressVIP of the cluster.
+  #   addressPools:
+  #   # (Required) Name of the address pool
+  #   - name: ""
+  #     # (Required) The addresses that are part of this pool. Each address must be either
+  #     # in the CIDR form (1.2.3.0/24) or range form (1.2.3.1-1.2.3.5).
+  #     addresses:
+  #     - ""
+  #     # # (Optional) Avoid using IPs ending in .0 or .255. This avoids buggy consumer devices
+  #     # # mistakenly dropping IPv4 traffic for those special IP addresses (default: false)
+  #     # avoidBuggyIPs: false
+  #     # # (Optional) Prevent IP addresses to be automatically assigned from this pool (default:
+  #     # # false)
+  #     # manualAssign: false
+# # (Optional) Enable dataplane v2
+# enableDataplaneV2: false
+# # (Optional) Enable support for multiple networking interfaces
+# multipleNetworkInterfaces: false
+# # (Optional) Enable advanced dataplane v2 networking features such as Egress NAT Gateway
+# # and it requires enableDataplaneV2 to be set
+# advancedNetworking: false
+# # (Optional) Storage specification for the cluster
+# storage:
+#   # Whether to disable vSphere CSI components deployment. The feature is enabled by
+#   # default.
+#   vSphereCSIDisabled: false
+# (Optional) User cluster master nodes must have either 1 or 3 replicas (default:
+# 4 CPUs; 16384 MB memory; 1 replica)
+masterNode:
+  cpus: 4
+  memoryMB: 8192
+  # How many machines of this type to deploy
+  replicas: 3
+  # # (Optional/Preview) Enable auto resizing on master
+  # autoResize:
+  #   # Whether to enable auto resize for master. Defaults to false.
+  #   enabled: false
+  # vsphere:
+  #   # (Optional) vSphere datastore the master nodes will be created on (default: vCenter.datastore)
+  #   datastore: ""
+# (Required) List of node pools. The total un-tainted replicas across all node pools
+# must be greater than or equal to 3
+nodePools:
+- name: gke-apigee-user-pool
+  cpus: 6
+  memoryMB: 12288
+  # How many machines of this type to deploy
+  replicas: 6
+  # # (Optional) boot disk size; must be at least 40 (default: 40)
+  # bootDiskSizeGB: 40
+  # (Optional) Specify the type of OS image; available options can be set to "ubuntu"
+  # "ubuntu_containerd" or "cos". Default is "ubuntu_containerd".
+  osImageType: ubuntu_containerd
+  # # Labels to apply to Kubernetes Node objects
+  labels:
+    app: apigee
+  # # Taints to apply to Kubernetes Node objects
+  # taints:
+  # - key: ""
+  #   value: ""
+  #   effect: ""
+  # vsphere:
+  #   # (Optional) vSphere datastore the node pool will be created on (default: vCenter.datastore)
+  #   datastore: ""
+  #   # (Optional) vSphere tags to be attached to the virtual machines in the node pool.
+  #   # It is supported in GKE on-prem version 1.7+
+  #   tags:
+  #   - category: ""
+  #     name: ""
+  # # (Optional/Preview) Horizontal autoscaling for the nodepool; replicas should not
+  # # be edited while updating the nodepool if this is turned on
+  # autoscaling:
+  #   # min number of replicas in the NodePool
+  #   minReplicas: 0
+  #   # max number of replicas in the NodePool
+  #   maxReplicas: 0
+  # # (Optional/Preview) Allow traffic of LoadBalancer typed services flow through nodes
+  # # of this pool. Can only be true in MetalLB mode. Default is false.
+  # enableLoadBalancer: false
+# Spread nodes across at least three physical hosts (requires at least three hosts)
+antiAffinityGroups:
+  # Set to false to disable DRS rule creation
+  enabled: true
+# # (Optional/Preview) Track user cluster VMs with vSphere tags
+# enableVMTracking: false
+# # (Optional) Configure additional authentication.
+# authentication:
+#   # (Optional) Provide an additional serving certificate for the API server
+#   sni:
+#     certPath: ""
+#     keyPath: ""
+# (Required) Specify which GCP project to connect your GKE clusters to
+gkeConnect:
+  projectID: _YOUR_GCP_PROJECT_ID_
+  # The absolute or relative path to the key file for a GCP service account used to
+  # register the cluster
+  registerServiceAccountKeyPath: connect-register-sa.json
+# (Optional) Specify which GCP project to connect your logs and metrics to
+stackdriver:
+  projectID: _YOUR_GCP_PROJECT_ID_
+  # A GCP region where you would like to store logs and metrics for this cluster.
+  clusterLocation: _YOUR_GCP_PROJECT_REGION_
+  enableVPC: false
+  # The absolute or relative path to the key file for a GCP service account used to
+  # send logs and metrics from the cluster
+  serviceAccountKeyPath: log-mon-sa.json
+  # (Optional) Disable vsphere resource metrics collection from vcenter.  False by
+  # default
+  disableVsphereResourceMetrics: false
+# # (Optional/Alpha) Configure the GKE usage metering feature
+# usageMetering:
+#   bigQueryProjectID: ""
+#   # The ID of the BigQuery Dataset in which the usage metering data will be stored
+#   bigQueryDatasetID: ""
+#   # The absolute or relative path to the key file for a GCP service account used by
+#   # gke-usage-metering to report to BigQuery
+#   bigQueryServiceAccountKeyPath: ""
+#   # Whether or not to enable consumption-based metering
+#   enableConsumptionMetering: false
+# # (Optional/Preview) Configure kubernetes apiserver audit logging
+# cloudAuditLogging:
+#   projectID: ""
+#   # A GCP region where you would like to store audit logs for this cluster.
+#   clusterLocation: ""
+#   # The absolute or relative path to the key file for a GCP service account used to
+#   # send audit logs from the cluster
+#   serviceAccountKeyPath: ""
+# Enable auto repair for the cluster
+autoRepair:
+  # Whether to enable auto repair feature. Set false to disable.
+  enabled: true
+# # Encrypt Kubernetes secrets at rest
+# secretsEncryption:
+#   # Secrets Encryption Mode. Possible values are: GeneratedKey
+#   mode: GeneratedKey
+#   # GeneratedKey Secrets Encryption config
+#   generatedKey:
+#     # # key version
+#     # keyVersion: 1
+#     # # disable secrets encryption
+#     # disabled: false

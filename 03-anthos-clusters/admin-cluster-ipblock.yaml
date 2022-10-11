@@ -1,0 +1,14 @@
+blocks:
+  - netmask: 255.255.255.0
+    gateway: 10.25.0.1
+    ips:
+    - ip: 10.25.0.3
+      hostname: gke-priv-admin0
+    - ip: 10.25.0.4
+      hostname: gke-priv-admin1
+    - ip: 10.25.0.5
+      hostname: gke-priv-admin2
+    - ip: 10.25.0.6
+      hostname: gke-priv-admin3
+    - ip: 10.25.0.7
+      hostname: gke-priv-admin4
