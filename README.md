@@ -55,4 +55,5 @@ Configure load balancing on with HAProxy on pfSense & VIPs:
 
 ## Steps
 
-* [GCP Tunnel](01-gcp-tunnel/README.md)
+* [GCP Tunnel](./01-gcp-tunnel/README.md)
+* [Anthos admin workstation](./02-anthos-admin-ws/README.md)
