@@ -53,6 +53,29 @@ Configure load balancing on with HAProxy on pfSense & VIPs:
 | gke-user-cluster-anthos-ingress | `10.26.0.50` | 80, 443      | gke-user{1-6}  | 30243, 30879 |
 | gke-user-cluster-apigee-ingress | `10.26.0.51` | 443          | gke-user{1-6}  | 30397        |
 
+### Firewall Admin Subnet `10.25.0.0/24` - Admin WS / Admin cluster
+
+| Protocol | Source | Source Port | Destination | Dest Port | Description |
+|----------|--------|-------------|-------------|-----------|-------------|
+| IPv4 UDP | `10.25.0.0/24` | * | NTP | 123 | Allow NTP |
+| IPv4 TCP/UDP | `10.25.0.0/24` | * | DNS | 53 | Allow DNS to Google-DNS |
+| IPv4 TCP | `10.25.0.0/24` | * | vCenter/ESXi IPs | 443 | Allow to vCenter/ESXi |
+| IPv4 TCP | `10.25.0.0/24` | * | `199.36.153.8/30` | 443 | Allow HTTPS to Private Google APIs |
+| IPv4 TCP | `10.25.0.0/24` | * | Control plane VIPs | 443 | Allow HTTPS to VIPs |
+| IPv4 ICMP | `10.25.0.2` | * | `10.26.0.0/24` | * | Allow Admin WS ICMP to user subnet |
+| IPv4 TCP | `10.25.0.2` | * | `10.26.0.0/24` | 22 | Allow Admin WS SSH to user subnet |
+| IPv4 TCP | `10.25.0.2` | * | `10.26.0.0/24` | 443 | Allow Admin WS HTTPS to user subnet |
+
+### Firewall User Subnet `10.26.0.0/24` - Apigee runtime
+
+| Protocol | Source | Source Port | Destination | Dest Port | Description |
+|----------|--------|-------------|-------------|-----------|-------------|
+| IPv4 UDP | `10.26.0.0/24` | * | NTP IP | 123 | Allow NTP |
+| IPv4 TCP/UDP | `10.26.0.0/24` | * | DNS IPs | 53 | Allow DNS to Priv-Google-DNS |
+| IPv4 TCP | `10.26.0.0/24` | * | `199.36.153.8/30` | 443 | Allow HTTPS to Private Google APIs |
+| IPv4 TCP | `10.26.0.0/24` | * | `10.25.0.51` | 443 | Allow HTTPS to User cluster CP VIP |
+| IPv4 TCP | `10.26.0.0/24` | * | `10.25.0.51` | 8132 | Allow Konnectivity to User cluster CP VIP |
+
 ## Steps
 
 * [GCP Tunnel](./01-gcp-tunnel/README.md)
