@@ -4,7 +4,7 @@ We can now follow the Apigee Hybrid runtime [installation](https://cloud.google.
 
 ## Part 1: Project and org setup
 
-Follow the [Part 1](https://cloud.google.com/apigee/docs/hybrid/v1.7/precog-overview) tutorial to setup the GCP project and apigee org
+Follow the [Part 1](https://cloud.google.com/apigee/docs/hybrid/v1.7/precog-overview) tutorial to set up the GCP project and apigee org
 
 ## Part 2: Hybrid runtime setup
 
@@ -31,9 +31,9 @@ Build Time: 2022-06-24T22:06:40Z
 Go Version: go1.17.8
 ```
 
-Then follow step 5-8 of tutorial if necessary
+Then follow steps 5-8 of tutorial if necessary
 
-Next we can deploy/update apigee runtime
+Next, we can deploy/update the Apigee runtime
 
 ```
 cd 05-apigee-hybrid/hybrid-files

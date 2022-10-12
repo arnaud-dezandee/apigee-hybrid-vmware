@@ -39,4 +39,4 @@ kubectl apply --kubeconfig kubeconfig -f cloud-console-reader.yaml
 kubectl apply --kubeconfig USER_CLUSTER_KUBECONFIG -f cloud-console-reader.yaml
 ```
 
-Then fetch and setup the kubernetes service account tokens in GCP Console
+Then fetch and setup the Kubernetes service account tokens in the GCP Console

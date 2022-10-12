@@ -2,7 +2,7 @@
 
 ## Networking, VPN Tunnel
 
-The subnet that will host all VMs inside the VMware datacenter needs to talk to Google APIs for Anthos and Apigee management plane. Thoses communications are routed through a site-to-site IPsec VPN between Google Cloud and the on-prem DC.
+The subnet that will host all VMs inside the VMware datacenter needs to talk to Google APIs for Anthos and Apigee management plane. Traffic is routed through a site-to-site IPsec VPN between Google Cloud and the on-prem DC.
 
 This is achieved with the combination of those 3 items:
 * GCP subnet with [Private Google Access](https://cloud.google.com/vpc/docs/private-google-access)
@@ -31,7 +31,7 @@ This is achieved with the combination of those 3 items:
 * Google Cloud SDK [documentation](https://cloud.google.com/sdk/)
 * Terraform [documentation](https://learn.hashicorp.com/tutorials/terraform/install-cli)
 
-### Create GCP ressources
+### Create GCP resources
 
 Fetch a GCP [Application Default Credentials (ADC)](https://cloud.google.com/docs/authentication/application-default-credentials)
 

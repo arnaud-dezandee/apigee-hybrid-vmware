@@ -1,6 +1,6 @@
 # VMware Apigee hybrid
 
-This repository contains code to setup Apigee hybrid on VMware without internet access for cluster VMs.
+This repository contains code to set up Apigee hybrid on VMware without internet access for cluster VMs.
 
 It's based on the official tutorial available here [Apigee hybrid](https://cloud.google.com/apigee/docs/hybrid/v1.7/big-picture).
 
@@ -43,7 +43,7 @@ It's based on the official tutorial available here [Apigee hybrid](https://cloud
 
 ## Load Balancing
 
-Configure load balancing on with HAProxy on pfSense & VIPs:
+Configure load balancing with HAProxy on pfSense & VIPs:
 
 | Name                           | VIP          | Frontend Port | Server Pool    | Server Port |
 |--------------------------------|--------------|---------------|----------------|-------------|

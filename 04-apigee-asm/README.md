@@ -2,9 +2,9 @@
 
 ## Build offline bundle
 
-The Anthos admin workstation only have limited access to Google APIs through the VPN tunnel. In order to install ASM, a wider internet access is required (github.com).
+The Anthos admin workstation only has limited access to Google APIs through the VPN tunnel. To install ASM, wider internet access is required (github.com).
 
-We can however build an offline bundle and transfer required files to the workstation.
+We can however build an offline bundle and transfer the required files to the workstation.
 
 On a computer with internet access (Linux), install `asmcli` following the instructions in [Install required tools.](https://cloud.google.com/service-mesh/v1.12/docs/unified-install/install-dependent-tools#install_required_tools)
 
@@ -35,7 +35,7 @@ gcloud auth activate-service-account vmware-install@_YOUR_GCP_PROJECT_ID_.iam.gs
   --project=_YOUR_GCP_PROJECT_ID_
 ```
 
-Unarchive the offline bundle and install asm with the provided file:
+Unarchive the offline bundle and install ASM with the provided file:
 
 * [`overlay.yaml`](./overlay.yaml)
 
