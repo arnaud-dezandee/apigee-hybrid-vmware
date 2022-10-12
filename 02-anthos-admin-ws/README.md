@@ -1,8 +1,8 @@
 # Anthos admin workstation
 
-## GCP ressources
+## GCP Service accounts
 
-Enable APIs and create the `component-access` service account with `terraform`:
+Enable APIs and create required service accounts with `terraform`:
 
 ```
 export GOOGLE_APPLICATION_CREDENTIALS="<path/to/adc_file.json>"
@@ -36,7 +36,7 @@ chmod +x gkeadm
 Then create the VM
 
 ```
-./gkeadm create admin-workstation --auto-create-service-accounts
+./gkeadm create admin-workstation
 ```
 
 ## Next

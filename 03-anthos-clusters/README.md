@@ -27,7 +27,7 @@ gkectl check-config --kubeconfig kubeconfig --config user-cluster.yaml
 gkectl create cluster --kubeconfig kubeconfig --config user-cluster.yaml
 ```
 
-## Connecting to Cloud console
+## Register clusters
 
 Follow [Connecting to a cluster from the Google Cloud console](https://cloud.google.com/anthos/clusters/docs/on-prem/1.10/how-to/connecting-to-a-cluster)
 
